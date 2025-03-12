@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+    <head>
+        <style type="text/css">
+            #container {
+                width: 40%;
+                margin: 0 auto;
+            }
+            textarea {
+                width: 100%;
+                display: block;
+                margin: 10px 0;
+            }
+            #in { height: 3em; }
+            #out { height: 15em; }
+        </style>
+        <script type="module">
+            import Mecab from "https://unpkg.com/mecab-wasm@1.0.2/lib/mecab.js";
+
+            async function analyzeText(text) {
+                await Mecab.waitReady();
+                return Mecab.query(text);
+            }
+
+            async function handleRequest() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const text = urlParams.get('text');
+
+                if (text) {
+                    const result = await analyzeText(text);
+
+                    // Return JSON if requested via script
+                    document.body.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+                } else {
+                    // Initialize UI if no params are given
+                    document.getElementById('button').addEventListener('click', async function() {
+                        let inputText = document.getElementById('in').value;
+                        let result = await analyzeText(inputText);
+                        document.getElementById('out').value = JSON.stringify(result, null, 2);
+                    });
+                }
+            }
+
+            window.addEventListener('load', handleRequest);
+        </script>
+    </head>
+    <body>
+        <div id="container">
+            <div>
+                <textarea id="in">吾輩は猫である</textarea>
+                <button id="button">Analyze</button>
+            </div>
+            <div>
+                <textarea id="out"></textarea>
+            </div>
+        <div>
+    </body>
+</html>
