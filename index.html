@@ -1,19 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
     <head>
-        <style type="text/css">
-            #container {
-                width: 40%;
-                margin: 0 auto;
-            }
-            textarea {
-                width: 100%;
-                display: block;
-                margin: 10px 0;
-            }
-            #in { height: 3em; }
-            #out { height: 15em; }
-        </style>
+        <meta charset="UTF-8">
         <script type="module">
             import Mecab from "https://unpkg.com/mecab-wasm@1.0.2/lib/mecab.js";
 
@@ -27,12 +15,25 @@
                 const text = urlParams.get('text');
 
                 if (text) {
+                    // Process text and return JSON
                     const result = await analyzeText(text);
+                    const jsonResult = JSON.stringify(result, null, 2);
 
-                    // Return JSON if requested via script
-                    document.body.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+                    // Trick browser into treating this as a JSON response
+                    const blob = new Blob([jsonResult], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+
+                    // Replace the page content with a download link
+                    document.body.innerHTML = `<a href="${url}" download="result.json">Download JSON</a>`;
+
+                    // Optionally, auto-download
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "result.json";
+                    document.body.appendChild(a);
+                    a.click();
                 } else {
-                    // Initialize UI if no params are given
+                    // Normal UI mode
                     document.getElementById('button').addEventListener('click', async function() {
                         let inputText = document.getElementById('in').value;
                         let result = await analyzeText(inputText);
