@@ -15,45 +15,18 @@
                 const text = urlParams.get('text');
 
                 if (text) {
-                    // Process text and return JSON
                     const result = await analyzeText(text);
                     const jsonResult = JSON.stringify(result, null, 2);
 
-                    // Trick browser into treating this as a JSON response
-                    const blob = new Blob([jsonResult], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-
-                    // Replace the page content with a download link
-                    document.body.innerHTML = `<a href="${url}" download="result.json">Download JSON</a>`;
-
-                    // Optionally, auto-download
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "result.json";
-                    document.body.appendChild(a);
-                    a.click();
+                    // Force the browser to display raw JSON
+                    document.body.innerText = jsonResult;
                 } else {
-                    // Normal UI mode
-                    document.getElementById('button').addEventListener('click', async function() {
-                        let inputText = document.getElementById('in').value;
-                        let result = await analyzeText(inputText);
-                        document.getElementById('out').value = JSON.stringify(result, null, 2);
-                    });
+                    document.body.innerText = JSON.stringify({ error: "Missing 'text' parameter" }, null, 2);
                 }
             }
 
             window.addEventListener('load', handleRequest);
         </script>
     </head>
-    <body>
-        <div id="container">
-            <div>
-                <textarea id="in">吾輩は猫である</textarea>
-                <button id="button">Analyze</button>
-            </div>
-            <div>
-                <textarea id="out"></textarea>
-            </div>
-        <div>
-    </body>
+    <body></body>
 </html>
