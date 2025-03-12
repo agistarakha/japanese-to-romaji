@@ -16,12 +16,9 @@
 
                 if (text) {
                     const result = await analyzeText(text);
-                    const jsonResult = JSON.stringify(result, null, 2);
-
-                    // Force the browser to display raw JSON
-                    document.body.innerText = jsonResult;
+                    document.body.textContent = JSON.stringify(result, null, 2);
                 } else {
-                    document.body.innerText = JSON.stringify({ error: "Missing 'text' parameter" }, null, 2);
+                    document.body.textContent = JSON.stringify({ error: "Missing 'text' parameter" }, null, 2);
                 }
             }
 
